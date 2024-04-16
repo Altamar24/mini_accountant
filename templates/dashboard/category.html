@@ -1,44 +1,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<body class="bg-gradient-primary">
+<div class="container">
+    <h2>{{category.name}}</h2>
+</div>
 
-    <div class="container">
-
-        <!-- Outer Row -->
-        <div class="row justify-content-center">
-
-            <div class="col-xl-10 col-lg-12 col-md-9">
-
-                <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
-                        <!-- Nested Row within Card Body -->
-                        <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
-                            <div class="col-lg-6">
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Введите название категории</h1>
-                                    </div>
-                                    <form class="user">
-                                        <div class="form-group">
-                                            <input type="email" class="form-control form-control-user"
-                                                id="exampleInputEmail" aria-describedby="emailHelp">
-                                        </div>
-                                        <a href="index.html" class="btn btn-primary btn-user btn-block">
-                                            Добавить
-                                        </a>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
+<div class="container-fluid">
+    <div class="col-lg-5 mb-4">
+    <a href="{% url 'add_expense'%}" class="btn btn-sm btn-dark shadow-sm"><i
+        class="fas fa-ruble-sign fa-sm text-white-white-white-50"></i> Добавить расход</a>
     </div>
-</body>
+</div>
+
+</div>
+{% for expense in category.expenses.all %}
+<div class="container-fluid">
+    <div class="col-lg-5 mb-4">
+        <div class="card bg-dark text-white shadow">
+            <div class="card-body">
+                {{ expense.total }}
+                <div class="text-white-50 small">{{ expense.title }}</div>
+                <div class="text-white-50 small">{{ expense.date }}</div>
+                <form method="post" action="{% url 'delete_category' pk=category.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-dark btn-sm" onclick="return confirm('Вы уверены, что хотите удалить эту сумму расхода?')">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
 {% endblock %}

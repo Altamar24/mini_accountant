@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <form method="post" novalidate class="card" action="{% url 'add_category' %}">
+        {% csrf_token %}
+        <h1><strong>Добавление категории</strong></h1>
+        <div class="form-buttons">
+            <div class="form-group">
+                <input type="text" name="name" class="form-control form-control-user"
+                       placeholder="Введите название категории">
+            </div>
+            <button type="submit" class="btn btn-dark">Добавить</button>
+            <a href="{% url 'index' %}" class="btn btn-dark">Назад</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

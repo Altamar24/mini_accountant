@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <form method="post" novalidate class="card" action="{% url 'add_expense' %}">
+        {% csrf_token %}
+        <h1><strong>Добавление расхода</strong></h1>
+        <div class="form-buttons">
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn btn-dark">Добавить</button>
+            <a href="{% url 'index' %}" class="btn btn-dark">Назад</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

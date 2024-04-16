@@ -1,12 +1,93 @@
-from django.shortcuts import render
+from django.views.generic import CreateView, DetailView, DeleteView, ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.http import HttpResponse
+from django.db.models import Sum
 
-def index (request):
-    return render(request, 'dashboard/index.html')
+from openpyxl import Workbook
+
+from .models import Category, Expense
 
 
-def get_category (request):
-    return render(request, 'dashboard/category.html')
+class CategoryListView(LoginRequiredMixin, ListView):
+    template_name = 'dashboard/index.html'
+    context_object_name = 'categories'
+
+    def get_queryset(self):
+        author = self.request.user
+        queryset = Category.objects.filter(author=author).annotate(
+            total_sum=Sum('expenses__total'))
+        return queryset
 
 
-def get_transaction (request):
-    return render(request, 'dashboard/transaction.html')
+def get_report(request):
+    try:
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Expense Report"
+
+        author = request.user
+        queryset = Expense.objects.filter(category__author=author)
+
+        for idx, expense in enumerate(queryset, start=1):
+            category = Category.objects.get(id=expense.category_id)
+
+            ws.cell(row=idx, column=1, value=expense.title)
+            ws.cell(row=idx, column=2, value=category.name)
+            ws.cell(row=idx, column=3, value=expense.total)
+            ws.cell(row=idx, column=4, value=expense.date)
+            ws.cell(row=idx, column=5, value=expense.comment)
+
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="expense_report.xlsx"'
+
+        wb.save(response)
+
+        return response
+
+    except Expense.DoesNotExist:
+        return HttpResponse("Список расходов пуст.")
+
+    except Category.DoesNotExist:
+        return HttpResponse("Список категориев пуст")
+
+    except Exception as e:
+        return HttpResponse("Ошибка: " + str(e))
+
+
+class CategoryDetailView(LoginRequiredMixin, DetailView):
+    model = Category
+    template_name = 'dashboard/category.html'
+
+
+class ExpenseDeleteView(LoginRequiredMixin, DeleteView):
+    model = Expense
+    success_url = reverse_lazy('index')
+
+
+class CategoryDeleteView(LoginRequiredMixin, DeleteView):
+    model = Category
+    success_url = reverse_lazy('index')
+
+
+class CategoryCreateView(LoginRequiredMixin, CreateView):
+    model = Category
+    fields = ['name']
+    template_name = 'dashboard/add_category.html'
+    success_url = reverse_lazy('index')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class ExpenseCreateView(LoginRequiredMixin, CreateView):
+    model = Expense
+    fields = '__all__'
+    template_name = 'dashboard/add_expense.html'
+    success_url = reverse_lazy('index')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
