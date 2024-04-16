@@ -21,7 +21,8 @@
                 {{ expense.total }}
                 <div class="text-white-50 small">{{ expense.title }}</div>
                 <div class="text-white-50 small">{{ expense.date }}</div>
-                <form method="post" action="{% url 'delete_category' pk=category.id %}">
+                <div class="text-white-50 small">{{ expense.comment }}</div>
+                <form method="post" action="{% url 'delete_expense' pk=expense.id %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-dark btn-sm" onclick="return confirm('Вы уверены, что хотите удалить эту сумму расхода?')">Удалить</button>
                 </form>
