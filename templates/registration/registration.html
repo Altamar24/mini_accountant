@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="p-5">
+                    <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Регистрация</h1>
+                    </div>
+                    <form class="user" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="{{ form.username.field.widget.input_type }}"
+                                class="form-control form-control-user" id="{{ form.username.field.id_for_label }}"
+                                placeholder="{{ form.username.label }}" name="{{ form.username.name }}">
+                            {{ form.username.errors }}
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <input type="{{ form.password1.field.widget.input_type }}"
+                                    class="form-control form-control-user" id="{{ form.password1.field.id_for_label }}"
+                                    placeholder="{{ form.password1.label }}" name="{{ form.password1.name }}">
+                                {{ form.password1.errors }}
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="{{ form.password2.field.widget.input_type }}"
+                                    class="form-control form-control-user" id="{{ form.password2.field.id_for_label }}"
+                                    placeholder="{{ form.password2.label }}" name="{{ form.password2.name }}">
+                                {{ form.password2.errors }}
+                            </div>
+                        </div>
+                        <button href="login.html" class="btn btn-primary btn-user btn-block">
+                            Зарегестрироваться
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

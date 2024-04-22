@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'dashboard.apps.DashboardConfig',
+    'accounts.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
@@ -83,4 +84,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = '/admin/'
+LOGIN_URL = 'login'
+
+LOGIN_REDIRECT_URL = 'index'
+
+AUTH_USER_MODEL = 'accounts.User'
