@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.http import HttpResponse
 from django.db.models import Sum
 
+from io import BytesIO
 from openpyxl import Workbook
 
 from .models import Category, Expense
@@ -38,11 +39,14 @@ def get_report(request):
             ws.cell(row=idx, column=4, value=expense.date)
             ws.cell(row=idx, column=5, value=expense.comment)
 
-        response = HttpResponse(
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="expense_report.xlsx"'
+        output = BytesIO()
+        wb.save(output)
 
-        wb.save(response)
+        response = HttpResponse(
+            output.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = 'attachment; filename="expense_report.xlsx"'
 
         return response
 
