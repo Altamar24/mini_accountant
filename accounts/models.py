@@ -3,4 +3,4 @@ from django.db import models
 
 
 class User (AbstractUser):
-    age = models.PositiveBigIntegerField(blank=True, null=True)
+    age = models.PositiveBigIntegerField(null=True, blank=True)

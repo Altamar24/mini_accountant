@@ -17,13 +17,13 @@ class Category(models.Model):
 
 
 class Expense(models.Model):
-    title = models.CharField(verbose_name=('Название'), max_length=255)
+    title = models.CharField(verbose_name='Название', max_length=255)
     category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, null=True, related_name='expenses', verbose_name=('Категория'))
-    total = models.PositiveIntegerField(verbose_name=('Сумма'))
-    date = models.DateField(verbose_name=('Дата'))
+        Category, on_delete=models.CASCADE, null=True, related_name='expenses', verbose_name='Категория')
+    total = models.PositiveIntegerField(verbose_name='Сумма')
+    date = models.DateField(verbose_name='Дата')
     comment = models.TextField(
-        null=True, blank=True, verbose_name=('Комментарий'))
+        null=True, blank=True, verbose_name='Комментарий')
 
     def __str__(self) -> str:
         return self.title
