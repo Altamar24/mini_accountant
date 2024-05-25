@@ -1,5 +1,6 @@
 from django.views.generic import CreateView, DetailView, DeleteView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.http import HttpResponse
 from django.db.models import Sum
@@ -20,7 +21,7 @@ class CategoryListView(LoginRequiredMixin, ListView):
             total_sum=Sum('expenses__total'))
         return queryset
 
-
+@login_required
 def get_report(request):
     try:
         wb = Workbook()

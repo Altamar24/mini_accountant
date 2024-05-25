@@ -4,7 +4,7 @@ from .views import CategoryCreateView,CategoryListView,CategoryDetailView,Catego
 
 urlpatterns = [
     path('', CategoryListView.as_view(), name='index'),
-    path('get_report', get_report),
+    path('get_report', get_report, name='get_report'),
     path('<int:pk>', CategoryDetailView.as_view(), name='category_detail'),
     path('add_expense', ExpenseCreateView.as_view(), name='add_expense'),
     path('expense/<int:pk>/delete/', ExpenseDeleteView.as_view(), name='delete_expense'),
