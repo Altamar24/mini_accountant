@@ -2,8 +2,9 @@ from django.views.generic import CreateView, DetailView, DeleteView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.db.models import Sum
+from django.shortcuts import get_object_or_404
 
 from io import BytesIO
 from openpyxl import Workbook
@@ -17,13 +18,15 @@ class CategoryListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         author = self.request.user
-        queryset = Category.objects.filter(author=author).annotate(
+        queryset = author.categories.all().annotate(
             total_sum=Sum('expenses__total'))
         return queryset
+
 
 @login_required
 def get_report(request):
     try:
+
         wb = Workbook()
         ws = wb.active
         ws.title = "Expense Report"
@@ -32,7 +35,7 @@ def get_report(request):
         queryset = Expense.objects.filter(category__author=author)
 
         for idx, expense in enumerate(queryset, start=1):
-            category = Category.objects.get(id=expense.category_id)
+            category = get_object_or_404(Category, id=expense.category_id)
 
             ws.cell(row=idx, column=1, value=expense.title)
             ws.cell(row=idx, column=2, value=category.name)
@@ -41,14 +44,16 @@ def get_report(request):
             ws.cell(row=idx, column=5, value=expense.comment)
 
         output = BytesIO()
+        
         wb.save(output)
 
         response = HttpResponse(
             output.getvalue(),
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            content_type=(f'application/vnd.openxmlformats-officedocument.'
+                          f'spreadsheetml.sheet')
         )
-        response['Content-Disposition'] = 'attachment; filename="expense_report.xlsx"'
-
+        response['Content-Disposition'] = (f'attachment; '
+                                           f'filename="expense_report.xlsx"')
         return response
 
     except Expense.DoesNotExist:
@@ -70,15 +75,27 @@ class ExpenseDeleteView(LoginRequiredMixin, DeleteView):
     model = Expense
     success_url = reverse_lazy('index')
 
+    def get_object(self, queryset=None):
+        expense = super(ExpenseDeleteView, self).get_object(queryset)
+        if expense.category.author != self.request.user:
+            raise Http404("Вы не можете удалить данный расход")
+        return expense
+
 
 class CategoryDeleteView(LoginRequiredMixin, DeleteView):
     model = Category
     success_url = reverse_lazy('index')
 
+    def get_object(self, queryset=None):
+        category = super(CategoryDeleteView, self).get_object(queryset)
+        if category.author != self.request.user:
+            raise Http404("Вы не можете удалить данную категорию")
+        return category
+
 
 class CategoryCreateView(LoginRequiredMixin, CreateView):
     model = Category
-    fields = ['name']
+    fields = ('name',)
     template_name = 'dashboard/add_category.html'
     success_url = reverse_lazy('index')
 

@@ -6,7 +6,7 @@ User = get_user_model()
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='categories')
 
     def __str__(self) -> str:
         return self.name
@@ -21,7 +21,7 @@ class Expense(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, null=True, related_name='expenses', verbose_name='Категория')
     total = models.PositiveIntegerField(verbose_name='Сумма')
-    date = models.DateField(verbose_name='Дата')
+    date = models.DateField(auto_now_add=True, verbose_name='Дата')
     comment = models.TextField(
         null=True, blank=True, verbose_name='Комментарий')
 
