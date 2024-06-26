@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (CategoryCreateView, CategoryListView, CategoryDetailView,
                     CategoryDeleteView, ExpenseCreateView, ExpenseDeleteView, 
                     get_report)
+               
 
 urlpatterns = [
     path('', CategoryListView.as_view(), name='index'),

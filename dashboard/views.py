@@ -1,9 +1,9 @@
-from django.views.generic import CreateView, DetailView, DeleteView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy
-from django.http import Http404, HttpResponse
 from django.db.models import Sum
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DetailView, DeleteView, ListView
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 
 from io import BytesIO

@@ -16,6 +16,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    'rest_framework',
+
     'dashboard.apps.DashboardConfig',
     'accounts.apps.AccountsConfig',
 ]
@@ -91,4 +93,6 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = 'login'
 
 LOGIN_REDIRECT_URL = 'index'
+
+
 
